@@ -2,63 +2,138 @@
 <html lang="ru">
 <head>
     <meta charset="utf-8">
-    <title>Z-IDE Professional</title>
-    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
-    <script src="https://unpkg.com/blockly/python_compressed.js"></script>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/000000/python.png">
+    <title>Z-IDE Pro</title>
+    <script src="js/blockly.min.js"></script>
+    <script src="js/python_compressed.js"></script>
+    <!-- <script src="js/blocks_compressed.js"></script> -->
+    <script src="js/ru.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0b0e14; --panel: #151921; --acc: #00f2ff; --brd: #2d333f; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: #e0e6ed; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        header { padding: 12px 20px; background: var(--panel); border-bottom: 1px solid var(--brd); display: flex; align-items: center; justify-content: space-between; }
+        :root { --bg: #0d1117; --panel: #161b22; --acc: #58a6ff; --brd: #30363d; --green: #238636; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: #c9d1d9; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        header { padding: 10px 20px; background: var(--panel); border-bottom: 1px solid var(--brd); display: flex; align-items: center; justify-content: space-between; }
         .main { display: flex; flex: 1; padding: 10px; gap: 10px; overflow: hidden; }
         #blocklyDiv { flex: 2; border-radius: 8px; border: 1px solid var(--brd); }
         .code-zone { flex: 1; display: flex; flex-direction: column; background: var(--panel); border-radius: 8px; border: 1px solid var(--brd); }
-        #codeOutput { margin: 0; padding: 15px; flex: 1; overflow: auto; font-family: 'Fira Code', monospace; font-size: 13px; color: #a5d6ff; line-height: 1.5; }
-        .btns { display: flex; gap: 10px; }
-        button { background: #232936; color: white; border: 1px solid var(--brd); padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 13px; }
-        button:hover { background: #2d3545; border-color: var(--acc); }
-        button.primary { background: var(--acc); color: #000; border: none; }
-        #status { font-size: 12px; color: #888; }
+        #codeOutput { margin: 0; padding: 15px; flex: 1; overflow: auto; font-family: 'Fira Code', monospace; font-size: 13px; color: #79c0ff; line-height: 1.5; }
+        .btns { display: flex; gap: 8px; }
+        button { background: #21262d; color: #c9d1d9; border: 1px solid var(--brd); padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
+        button:hover { background: #30363d; border-color: #8b949e; }
+        button.primary { background: var(--green); color: white; border: none; }
+        #status { font-size: 11px; color: #8b949e; }
     </style>
 </head>
 <body>
 
 <header>
-    <div style="display:flex; align-items:center; gap:20px;">
-        <span style="color:var(--acc); font-weight:bold; letter-spacing:1px;">Z-IDE v2.0</span>
-        <div id="status">● Файл не выбран</div>
+    <div style="display:flex; align-items:center; gap:15px;">
+        <span style="color:var(--acc); font-weight:bold; font-size:18px;">ULTIMATE PATRIOTIK IDE</span>
+        <div id="status">● Ожидание...</div>
     </div>
     <div class="btns">
-        <button id="btnBind">1. ВЫБРАТЬ ФАЙЛ (.py)</button>
-        <button class="primary" onclick="runOnPc()">2. ЗАПУСТИТЬ</button>
+        <button onclick="saveBlocks()">Сохранить проект</button>
+        <button onclick="loadBlocks()">Открыть проект</button>
+        <button id="btnBind">Привязать .py файл</button>
+        <button class="primary" onclick="runOnPc()">ЗАПУСТИТЬ</button>
     </div>
 </header>
 
 <div class="main">
     <div id="blocklyDiv"></div>
     <div class="code-zone">
-        <div style="padding: 8px 15px; font-size: 10px; color: #555; border-bottom: 1px solid var(--brd);">GENERATED_PYTHON_SOURCE</div>
+        <div style="padding: 5px 15px; font-size: 10px; color: #8b949e; border-bottom: 1px solid var(--brd);">GENERATED_CODE</div>
         <pre id="codeOutput"></pre>
     </div>
 </div>
 
 <xml id="toolbox" style="display: none">
+    <category name="Логика" colour="#5b80a5">
+        <block type="controls_if"></block>
+        <block type="logic_compare"></block>
+        <block type="logic_operation"></block>
+    </category>
+    <category name="Циклы" colour="#5ba55b">
+        <block type="controls_repeat_ext"><value name="TIMES"><block type="math_number"><field name="NUM">10</field></block></value></block>
+        <block type="controls_whileUntil"></block>
+        <block type="controls_for"></block>
+    </category>
     <category name="Математика" colour="#5b67a5">
         <block type="math_number"></block>
         <block type="math_arithmetic"></block>
     </category>
-    <category name="Z-Геометрия" colour="#995ba5">
-        <block type="create_point"></block>
-        <block type="block_z"></block>
-    </category>
     <category name="Переменные" colour="#a55b80" custom="VARIABLE"></category>
+    <category name="Функции" colour="#995ba5" custom="PROCEDURE"></category>
+    <category name="Геометрия" colour="#0d8d94">
+        <block type="create_point"></block>
+        <block type="point_arithmetic"></block>
+        <block type="point_scale"></block>
+        <block type="point_get"></block>
+        <block type="dist"></block>
+    </category>
+    <category name="игровые объекты" colour="#5b0669">
+        <block type="robot1"></block>
+        <block type="robot2"></block>
+        <block type="robot3"></block>
+        <block type="robot_get_pos"></block>
+        <block type="ball"></block>
+        <block type="ally_goal"></block>
+        <block type="enemy_goal"></block>
+    </category>
+    <category name="Команды роботам" colour="#695506">
+        <block type="kick"></block>
+        <block type="go"></block>
+        
+    </category>
+    
 </xml>
 
 <script>
     let fileHandle;
     const statusEl = document.getElementById('status');
-
-    // Определение блоков
+    Blockly.Blocks['robot1'] = {
+        init: function() {
+            this.appendDummyInput().appendField("robot1");
+            this.setInputsInline(true); this.setOutput(true, "Robot"); this.setColour("#5b0669");
+        }
+    };
+    Blockly.Blocks['robot2'] = {
+        init: function() {
+            this.appendDummyInput().appendField("robot2");
+            this.setInputsInline(true); this.setOutput(true, "Robot"); this.setColour("#5b0669");
+        }
+    };
+    Blockly.Blocks['robot3'] = {
+        init: function() {
+            this.appendDummyInput().appendField("robot3");
+            this.setInputsInline(true); this.setOutput(true, "Robot"); this.setColour("#5b0669");
+        }
+    };
+    Blockly.Blocks['robot_get_pos'] = {
+        init: function() {
+            this.appendValueInput("rob").setCheck("Robot");
+            this.appendDummyInput().appendField("Pos");
+            this.setOutput(true, "Point"); this.setColour("#5b0669");
+        }
+    };
+    Blockly.Blocks['ball'] = {
+        init: function() {
+            this.appendDummyInput().appendField("ball");
+            this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#5b0669");
+        }
+    };
+    Blockly.Blocks['ally_goal'] = {
+        init: function() {
+            this.appendDummyInput().appendField("ally_goal");
+            this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#5b0669");
+        }
+    };
+    Blockly.Blocks['enemy_goal'] = {
+        init: function() {
+            this.appendDummyInput().appendField("enemy_goal");
+            this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#5b0669");
+        }
+    };
     Blockly.Blocks['create_point'] = {
         init: function() {
             this.appendDummyInput().appendField("Point(");
@@ -66,72 +141,161 @@
             this.appendDummyInput().appendField(",");
             this.appendValueInput("Y").setCheck("Number");
             this.appendDummyInput().appendField(")");
-            this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#995ba5");
+            this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#0d8d94");
         }
     };
-    Blockly.Blocks['block_z'] = {
+    Blockly.Blocks['point_arithmetic'] = {
         init: function() {
-            this.appendDummyInput().appendField("Z_FUNC");
-            this.appendValueInput("ID").setCheck("Number").appendField("id:");
-            this.appendValueInput("POINT").setCheck("Point").appendField("pos:");
-            this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true); this.setColour("#00f2ff");
+            this.appendValueInput("A").setCheck("Point");
+            this.appendDummyInput().appendField(new Blockly.FieldDropdown([["+", "ADD"], ["-", "SUB"]]), "OP");
+            this.appendValueInput("B").setCheck("Point");
+            this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#0d8d94");
+        }
+    };
+    Blockly.Blocks['point_scale'] = {
+        init: function() {
+            this.appendValueInput("P").setCheck("Point");
+            this.appendDummyInput().appendField("*");
+            this.appendValueInput("N").setCheck("Number");
+            this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#0d8d94");
+        }
+    };
+    Blockly.Blocks['point_get'] = {
+        init: function() {
+            this.appendValueInput("P").setCheck("Point");
+            this.appendDummyInput().appendField(".").appendField(new Blockly.FieldDropdown([["x", "X"], ["y", "Y"]]), "COORD");
+            this.setOutput(true, "Number"); this.setColour("#0d8d94");
+        }
+    };
+    Blockly.Blocks['dist'] = {
+        init: function() {
+            this.appendDummyInput().appendField("dist");
+            this.appendValueInput("P1").setCheck("Point");
+            this.appendDummyInput().appendField(",");
+            this.appendValueInput("P2").setCheck("Point");
+            this.setOutput(true, "Number"); this.setColour("#0d8d94");
         }
     };
 
-    // Генераторы кода
-    Blockly.Python['create_point'] = function(block) {
-        let x = Blockly.Python.valueToCode(block, 'X', Blockly.Python.ORDER_ATOMIC) || '0';
-        let y = Blockly.Python.valueToCode(block, 'Y', Blockly.Python.ORDER_ATOMIC) || '0';
-        return [`Point(${x}, ${y})`, Blockly.Python.ORDER_ATOMIC];
+    Blockly.Blocks['kick'] = {
+        init: function() {
+            this.appendDummyInput().appendField("KICK");
+            this.appendValueInput("robot").setCheck("Robot").appendField("robot:");
+            this.appendValueInput("POINT").setCheck("Point").appendField("pos:");
+            this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true); this.setColour("#695506");
+        }
     };
-    Blockly.Python['block_z'] = function(block) {
-        let id = Blockly.Python.valueToCode(block, 'ID', Blockly.Python.ORDER_ATOMIC) || '0';
-        let pt = Blockly.Python.valueToCode(block, 'POINT', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
-        return `Z(${id}, ${pt})\n`;
+    Blockly.Blocks['go'] = {
+        init: function() {
+            this.appendDummyInput().appendField("GO");
+            this.appendValueInput("robot").setCheck("Robot").appendField("robot:");
+            this.appendValueInput("POINT").setCheck("Point").appendField("pos:");
+            this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true); this.setColour("#695506");
+        }
     };
+    
+    Blockly.Python.forBlock['robot1'] = function(block) {
+        return [`field.allies[1]`, Blockly.Python.ORDER_ATOMIC];
+    };
+    Blockly.Python.forBlock['robot2'] = function(block) {
+        return [`field.allies[2]`, Blockly.Python.ORDER_ATOMIC];
+    };
+    Blockly.Python.forBlock['robot3'] = function(block) {
+        return [`field.allies[3]`, Blockly.Python.ORDER_ATOMIC];
+    };
+    Blockly.Python.forBlock['ball'] = function(block) {
+        return [`field.ball.get_pos()`, Blockly.Python.ORDER_ATOMIC];
+    };
+    Blockly.Python.forBlock['ally_goal'] = function(block) {
+        return [`field.ally_goal.center`, Blockly.Python.ORDER_ATOMIC];
+    };
+    Blockly.Python.forBlock['enemy_goal'] = function(block) {
+        return [`field.enemy_goal.center`, Blockly.Python.ORDER_ATOMIC];
+    };
+    Blockly.Python.forBlock['robot_get_pos'] = function(block) {
+        const rob = Blockly.Python.valueToCode(block, 'rob', Blockly.Python.ORDER_ATOMIC);
+        return [`${rob}.get_pos()`, Blockly.Python.ORDER_ATOMIC];
+    };
+    Blockly.Python.forBlock['create_point'] = function(block) {
+        const x = Blockly.Python.valueToCode(block, 'X', Blockly.Python.ORDER_ATOMIC) || '0';
+        const y = Blockly.Python.valueToCode(block, 'Y', Blockly.Python.ORDER_ATOMIC) || '0';
+        return [`aux.Point(${x}, ${y})`, Blockly.Python.ORDER_ATOMIC];
+    };
+    Blockly.Python.forBlock['point_arithmetic'] = function(block) {
+        const a = Blockly.Python.valueToCode(block, 'A', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
+        const b = Blockly.Python.valueToCode(block, 'B', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
+        const op = block.getFieldValue('OP') === 'ADD' ? '+' : '-';
+        return [`${a} ${op} ${b}`, Blockly.Python.ORDER_ATOMIC];
+    };
+    Blockly.Python.forBlock['point_scale'] = function(block) {
+        const p = Blockly.Python.valueToCode(block, 'P', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
+        const n = Blockly.Python.valueToCode(block, 'N', Blockly.Python.ORDER_ATOMIC) || '1';
+        return [`${p} * ${n}`, Blockly.Python.ORDER_ATOMIC];
+    };
+    Blockly.Python.forBlock['point_get'] = function(block) {
+        const p = Blockly.Python.valueToCode(block, 'P', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
+        const coord = block.getFieldValue('COORD').toLowerCase();
+        return [`${p}.${coord}`, Blockly.Python.ORDER_ATOMIC];
+    };
+    Blockly.Python.forBlock['dist'] = function(block) {
+        const p1 = Blockly.Python.valueToCode(block, 'P1', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
+        const p2 = Blockly.Python.valueToCode(block, 'P2', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
+        return [`aux.dist(${p1},${p2})`, Blockly.Python.ORDER_ATOMIC];
+    };
+    Blockly.Python.forBlock['kick'] = function(block) {
+        const rob = Blockly.Python.valueToCode(block, 'robot', Blockly.Python.ORDER_ATOMIC) || '0';
+        const pt = Blockly.Python.valueToCode(block, 'POINT', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
+        return 'Actions[' + rob + '.id] = actions.kick( ' + pt + ')\n';
+    };
+    Blockly.Python.forBlock['go'] = function(block) {
+        const rob = Blockly.Python.valueToCode(block, 'robot', Blockly.Python.ORDER_ATOMIC) || '0';
+        const pt = Blockly.Python.valueToCode(block, 'POINT', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
+        return 'Actions[' + rob + '.id] = actions.goToPoint( ' + pt + ',0)\n';
 
+    };
+    
     const workspace = Blockly.inject('blocklyDiv', {
         toolbox: document.getElementById('toolbox'),
-        theme: Blockly.Themes.Dark,
-        grid: {spacing: 20, length: 3, colour: '#1d232d', snap: true}
+        theme: Blockly.Theme.defineTheme('dark', {
+            'base': Blockly.Themes.Classic,
+            'componentStyles': { 'workspaceBackgroundColour': '#0d1117', 'toolboxBackgroundColour': '#161b22', 'toolboxTextColour': '#c9d1d9', 'flyoutBackgroundColour': '#0d1117' }
+        }),
+        grid: { spacing: 20, length: 3, colour: '#21262d', snap: true }
     });
 
-    const headerText = `import time\n\nclass Point:\n    def __init__(self,x,y): self.x,self.y=x,y\n    def __repr__(self): return f"P({self.x},{self.y})"\n\ndef Z(id_val, pt):\n    print(f"Executing Z: ID={id_val} at {pt}")\n    return pt\n\n# --- BEGIN ---\n`;
-
+    const pyHeader = "";
     async function update() {
-        const code = headerText + Blockly.Python.workspaceToCode(workspace);
+        const code = pyHeader + Blockly.Python.workspaceToCode(workspace);
         document.getElementById('codeOutput').innerText = code;
-        
         if (fileHandle) {
             try {
                 const writable = await fileHandle.createWritable();
                 await writable.write(code);
                 await writable.close();
-                statusEl.innerText = "● Файл синхронизирован";
-                statusEl.style.color = "#00f2ff";
-            } catch (e) {
-                statusEl.innerText = "● Ошибка записи!";
-                statusEl.style.color = "red";
-            }
+            } catch (e) {}
         }
     }
     workspace.addChangeListener(update);
-
-    document.getElementById('btnBind').onclick = async () => {
-        try {
-            [fileHandle] = await window.showOpenFilePicker({
-                types: [{ description: 'Python file', accept: {'text/python': ['.py']} }]
-            });
-            statusEl.innerText = "● Связь установлена";
-            update();
-        } catch (e) { alert("Используйте Chrome/Edge или запустите через http://localhost:5000"); }
-    };
-
-    function runOnPc() {
-        fetch('/run').then(r => r.json()).then(d => {
-            if(d.status !== "Success") alert("Ошибка сервера");
-        }).catch(() => alert("Сервер server.py не запущен!"));
+    function saveBlocks() {
+        const data = JSON.stringify(Blockly.serialization.workspaces.save(workspace));
+        const blob = new Blob([data], {type: 'application/json'});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'project.json'; a.click();
     }
+    function loadBlocks() {
+        const input = document.createElement('input'); input.type = 'file';
+        input.onchange = e => {
+            const reader = new FileReader();
+            reader.onload = ev => Blockly.serialization.workspaces.load(JSON.parse(ev.target.result), workspace);
+            reader.readAsText(e.target.files[0]);
+        };
+        input.click();
+    }
+    document.getElementById('btnBind').onclick = async () => {
+        [fileHandle] = await window.showOpenFilePicker();
+        statusEl.innerText = "● Файл привязан"; statusEl.style.color = "#3fb950";
+        update();
+    };
+    function runOnPc() { fetch('/run').catch(() => alert("Ошибка сервера")); }
 </script>
 </body>
 </html>
