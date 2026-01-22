@@ -72,9 +72,6 @@
         <block type="dist"></block>
     </category>
     <category name="игровые объекты" colour="#5b0669">
-        <block type="robot1"></block>
-        <block type="robot2"></block>
-        <block type="robot3"></block>
         <block type="robot_get_pos"></block>
         <block type="ball"></block>
         <block type="ally_goal"></block>
@@ -91,27 +88,9 @@
 <script>
     let fileHandle;
     const statusEl = document.getElementById('status');
-    Blockly.Blocks['robot1'] = {
-        init: function() {
-            this.appendDummyInput().appendField("robot1");
-            this.setInputsInline(true); this.setOutput(true, "Robot"); this.setColour("#5b0669");
-        }
-    };
-    Blockly.Blocks['robot2'] = {
-        init: function() {
-            this.appendDummyInput().appendField("robot2");
-            this.setInputsInline(true); this.setOutput(true, "Robot"); this.setColour("#5b0669");
-        }
-    };
-    Blockly.Blocks['robot3'] = {
-        init: function() {
-            this.appendDummyInput().appendField("robot3");
-            this.setInputsInline(true); this.setOutput(true, "Robot"); this.setColour("#5b0669");
-        }
-    };
     Blockly.Blocks['robot_get_pos'] = {
         init: function() {
-            this.appendValueInput("rob").setCheck("Robot");
+            this.appendValueInput("id").setCheck("Number");
             this.appendDummyInput().appendField("Pos");
             this.setOutput(true, "Point"); this.setColour("#5b0669");
         }
@@ -180,7 +159,7 @@
     Blockly.Blocks['kick'] = {
         init: function() {
             this.appendDummyInput().appendField("KICK");
-            this.appendValueInput("robot").setCheck("Robot").appendField("robot:");
+            this.appendValueInput("id").setCheck("Number").appendField("id:");
             this.appendValueInput("POINT").setCheck("Point").appendField("pos:");
             this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true); this.setColour("#695506");
         }
@@ -188,20 +167,10 @@
     Blockly.Blocks['go'] = {
         init: function() {
             this.appendDummyInput().appendField("GO");
-            this.appendValueInput("robot").setCheck("Robot").appendField("robot:");
+            this.appendValueInput("id").setCheck("Number").appendField("id:");
             this.appendValueInput("POINT").setCheck("Point").appendField("pos:");
             this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true); this.setColour("#695506");
         }
-    };
-    
-    Blockly.Python.forBlock['robot1'] = function(block) {
-        return [`field.allies[1]`, Blockly.Python.ORDER_ATOMIC];
-    };
-    Blockly.Python.forBlock['robot2'] = function(block) {
-        return [`field.allies[2]`, Blockly.Python.ORDER_ATOMIC];
-    };
-    Blockly.Python.forBlock['robot3'] = function(block) {
-        return [`field.allies[3]`, Blockly.Python.ORDER_ATOMIC];
     };
     Blockly.Python.forBlock['ball'] = function(block) {
         return [`field.ball.get_pos()`, Blockly.Python.ORDER_ATOMIC];
@@ -213,8 +182,8 @@
         return [`field.enemy_goal.center`, Blockly.Python.ORDER_ATOMIC];
     };
     Blockly.Python.forBlock['robot_get_pos'] = function(block) {
-        const rob = Blockly.Python.valueToCode(block, 'rob', Blockly.Python.ORDER_ATOMIC);
-        return [`${rob}.get_pos()`, Blockly.Python.ORDER_ATOMIC];
+        const id = Blockly.Python.valueToCode(block, 'id', Blockly.Python.ORDER_ATOMIC);
+        return [`field.allies[${id}].get_pos()`, Blockly.Python.ORDER_ATOMIC];
     };
     Blockly.Python.forBlock['create_point'] = function(block) {
         const x = Blockly.Python.valueToCode(block, 'X', Blockly.Python.ORDER_ATOMIC) || '0';
@@ -243,14 +212,14 @@
         return [`aux.dist(${p1},${p2})`, Blockly.Python.ORDER_ATOMIC];
     };
     Blockly.Python.forBlock['kick'] = function(block) {
-        const rob = Blockly.Python.valueToCode(block, 'robot', Blockly.Python.ORDER_ATOMIC) || '0';
+        const id = Blockly.Python.valueToCode(block, 'id', Blockly.Python.ORDER_ATOMIC) || '0';
         const pt = Blockly.Python.valueToCode(block, 'POINT', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
-        return 'Actions[' + rob + '.id] = actions.kick( ' + pt + ')\n';
+        return 'Actions[' + id + '] = actions.kick( ' + pt + ')\n';
     };
     Blockly.Python.forBlock['go'] = function(block) {
-        const rob = Blockly.Python.valueToCode(block, 'robot', Blockly.Python.ORDER_ATOMIC) || '0';
+        const id = Blockly.Python.valueToCode(block, 'id', Blockly.Python.ORDER_ATOMIC) || '0';
         const pt = Blockly.Python.valueToCode(block, 'POINT', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
-        return 'Actions[' + rob + '.id] = actions.goToPoint( ' + pt + ',0)\n';
+        return 'Actions[' + id + '] = actions.goToPoint( ' + pt + ',0)\n';
 
     };
     
