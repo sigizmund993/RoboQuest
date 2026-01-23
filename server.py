@@ -6,7 +6,7 @@ import sys
 app = Flask(__name__, static_url_path='', static_folder='.')
 CORS(app)
 
-TARGET_SCRIPT = "main_engine.py"
+TARGET_SCRIPT = "../strategy/main.py"
 
 @app.route('/')
 def index():
