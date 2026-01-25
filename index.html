@@ -299,7 +299,7 @@
             }
         };
         Blockly.Python.forBlock['ally_goal_up'] = function (block) {
-            return [`field.ally_goal.up`, Blockly.Python.ORDER_ATOMIC];
+            return [`(field.ally_goal.up + field.ally_goal.frw_up) / 2`, Blockly.Python.ORDER_ATOMIC];
         };
 
         Blockly.Blocks['ally_goal_down'] = {
@@ -309,7 +309,7 @@
             }
         };
         Blockly.Python.forBlock['ally_goal_down'] = function (block) {
-            return [`field.ally_goal.down`, Blockly.Python.ORDER_ATOMIC];
+            return [`(field.ally_goal.down + field.ally_goal.frw_down) / 2`, Blockly.Python.ORDER_ATOMIC];
         };
 
 
@@ -386,8 +386,8 @@
                 this.appendValueInput("line12").setCheck("Point");
                 this.appendValueInput("line21").setCheck("Point");
                 this.appendValueInput("line22").setCheck("Point");
-                this.appendDummyInput().appendField(new Blockly.FieldDropdown([["Отрезок", "S"], ["Линия", "L"], ["Луч", "R"]]), "OP1");
-                this.appendDummyInput().appendField(new Blockly.FieldDropdown([["Отрезок", "S"], ["Линия", "L"], ["Луч", "R"]]), "OP2");
+                this.appendDummyInput().appendField(new Blockly.FieldDropdown([["Линия", "L"], ["Отрезок", "S"], ["Луч", "R"]]), "OP1");
+                this.appendDummyInput().appendField(new Blockly.FieldDropdown([["Линия", "L"], ["Отрезок", "S"], [ "Луч", "R"]]), "OP2");
 
                 this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#0d8d94");
             }
