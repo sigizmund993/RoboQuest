@@ -128,9 +128,23 @@
             <block type="math_number"></block>
             <block type="math_arithmetic"></block>
         </category>
+        <category name="Текст" colour="#5ba58c">
+            <block type="text"></block>
+            <block type="text_join"></block>
+            <block type="text_append">
+                <value name="TEXT">
+                    <shadow type="text"></shadow>
+                </value>
+            </block>
+            <block type="text_length"></block>
+            <block type="text_isEmpty"></block>
+            <block type="text_indexOf"></block>
+            <block type="text_charAt"></block>
+        </category>
         <category name="Переменные" colour="#a55b80" custom="VARIABLE"></category>
         <category name="Функции" colour="#995ba5" custom="PROCEDURE"></category>
         <category name="Все остальное" colour="#0d8d94">
+            <block type="create_var"></block>
             <block type="create_point"></block>
             <block type="point_arithmetic"></block>
             <block type="point_scale"></block>
@@ -181,11 +195,12 @@
             init: function () {
                 this.appendDummyInput().appendField("объявить переменную");
                 this.appendValueInput("var_name").setCheck("String");
+                this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true); this.setColour("#695506");
             }
         };
         Blockly.Python.forBlock['create_var'] = function (block) {
             const name = Blockly.Python.valueToCode(block, 'var_name', Blockly.Python.ORDER_ATOMIC);
-            return [`global ${name}`, Blockly.Python.ORDER_ATOMIC];
+            return 'global ' + name + "\n"
         };
 
         Blockly.Blocks['robot_get_pos'] = {
@@ -383,8 +398,8 @@
             const line21 = Blockly.Python.valueToCode(block, 'line21', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
             const line22 = Blockly.Python.valueToCode(block, 'line22', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
 
-            const op1 = block.getFieldValue('OP1').toLowerCase();
-            const op2 = block.getFieldValue('OP2').toLowerCase();
+            const op1 = block.getFieldValue('OP1')
+            const op2 = block.getFieldValue('OP2')
 
             return [`aux.get_line_intersection(${line11},${line12},${line21},${line22},"${op1}${op1}")`, Blockly.Python.ORDER_ATOMIC];
         };
@@ -403,7 +418,7 @@
             const line1 = Blockly.Python.valueToCode(block, 'line1', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
             const line2 = Blockly.Python.valueToCode(block, 'line2', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
 
-            const op = block.getFieldValue('OP').toLowerCase();
+            const op = block.getFieldValue('OP')
 
             return [`aux.closest_point_on_line(${line1},${line2},"${op1}")`, Blockly.Python.ORDER_ATOMIC];
         };
@@ -511,7 +526,7 @@
 
         const pyHeader = "# mypy: ignore-errors\nfrom bridge import const\nfrom bridge.auxiliary import aux, fld, rbt\nfrom bridge.const import State as GameStates\nfrom bridge.router.base_actions import Action, Actions, KickActions\nfrom bridge.strategy import attack_roles, defense_roles, goalk_func, ref_states, tests, attacker_func\nfrom bridge.strategy.strategy import Strategy\n";
         //"def debug(self: Strategy, field: fld.Field, actions: list[Action]) -> None:\n"
-        const pyEnder = "Strategy.debug = debug"
+        const pyEnder = "\nStrategy.debug = debug"
         async function update() {
             const code = pyHeader + Blockly.Python.workspaceToCode(workspace) + pyEnder;
             // document.getElementById('codeOutput').innerText = code;
