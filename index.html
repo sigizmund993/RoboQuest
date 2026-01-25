@@ -54,25 +54,8 @@
             border: 1px solid var(--brd);
         }
 
-        .code-zone {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--panel);
-            border-radius: 8px;
-            border: 1px solid var(--brd);
-        }
 
-        #codeOutput {
-            margin: 0;
-            padding: 15px;
-            flex: 1;
-            overflow: auto;
-            font-family: 'Fira Code', monospace;
-            font-size: 13px;
-            color: #79c0ff;
-            line-height: 1.5;
-        }
+
 
         .btns {
             display: flex;
@@ -125,11 +108,6 @@
 
     <div class="main">
         <div id="blocklyDiv"></div>
-        <!-- <div class="code-zone">
-            <div style="padding: 5px 15px; font-size: 10px; color: #8b949e; border-bottom: 1px solid var(--brd);">
-                GENERATED_CODE</div>
-            <pre id="codeOutput"></pre>
-        </div> -->
     </div>
 
     <xml id="toolbox" style="display: none">
@@ -137,8 +115,7 @@
             <block type="controls_if"></block>
             <block type="logic_compare"></block>
             <block type="logic_operation"></block>
-        </category>
-        <category name="Циклы" colour="#5ba55b">
+            <block type="logic_no"></block>
             <block type="controls_repeat_ext">
                 <value name="TIMES">
                     <block type="math_number">
@@ -148,34 +125,37 @@
             </block>
             <block type="controls_whileUntil"></block>
             <block type="controls_for"></block>
-        </category>
-        <category name="Математика" colour="#5b67a5">
             <block type="math_number"></block>
             <block type="math_arithmetic"></block>
         </category>
         <category name="Переменные" colour="#a55b80" custom="VARIABLE"></category>
         <category name="Функции" colour="#995ba5" custom="PROCEDURE"></category>
-        <category name="Геометрия" colour="#0d8d94">
+        <category name="Все остальное" colour="#0d8d94">
             <block type="create_point"></block>
             <block type="point_arithmetic"></block>
             <block type="point_scale"></block>
             <block type="point_get"></block>
             <block type="dist"></block>
-            <block type="is_ball_in_zone"></block>
-        </category>
-        <category name="игровые объекты" colour="#5b0669">
+            <block type="line_intersect"></block>
+            <block type="closest_point_on_line"></block>
             <block type="robot_get_pos"></block>
             <block type="ball"></block>
-            <block type="ally_goal"></block>
-            <block type="enemy_goal"></block>
-            <block type="defend_point"></block>
-
-        </category>
-        <category name="Команды роботам" colour="#695506">
+            <block type="old_ball_pos"></block>
+            <block type="ball_moves"></block>
+            <block type="ally_goal_center"></block>
+            <block type="ally_goal_up"></block>
+            <block type="ally_goal_down"></block>
+            <block type="enemy_goal_center"></block>
+            <block type="enemy_goal_up"></block>
+            <block type="enemy_goal_down"></block>
+            <block type="def_point_1"></block>
+            <block type="def_point_2"></block>
+            <!-- <block type="atk_point_1"></block>
+            <block type="atk_point_2"></block> -->
+            <block type="is_ball_in_zone"></block>
             <block type="strategy_wrapper"></block>
             <block type="kick"></block>
             <block type="go"></block>
-
         </category>
 
     </xml>
@@ -183,6 +163,30 @@
     <script>
         let fileHandle;
         const statusEl = document.getElementById('status');
+
+
+        Blockly.Blocks['logic_no'] = {
+            init: function () {
+                this.appendDummyInput().appendField("не");
+                this.appendValueInput("stat").setCheck("Boolean");
+                this.setInputsInline(true); this.setOutput(true, "Boolean"); this.setColour("#5b0669");
+            }
+        };
+        Blockly.Python.forBlock['logic_no'] = function (block) {
+            const stat = Blockly.Python.valueToCode(block, 'stat', Blockly.Python.ORDER_ATOMIC);
+            return [`not ${stat}`, Blockly.Python.ORDER_ATOMIC];
+        };
+
+        Blockly.Blocks['create_var'] = {
+            init: function () {
+                this.appendDummyInput().appendField("объявить переменную");
+                this.appendValueInput("var_name").setCheck("String");
+            }
+        };
+        Blockly.Python.forBlock['create_var'] = function (block) {
+            const name = Blockly.Python.valueToCode(block, 'var_name', Blockly.Python.ORDER_ATOMIC);
+            return [`global ${name}`, Blockly.Python.ORDER_ATOMIC];
+        };
 
         Blockly.Blocks['robot_get_pos'] = {
             init: function () {
@@ -206,35 +210,126 @@
             return [`field.ball.get_pos()`, Blockly.Python.ORDER_ATOMIC];
         };
 
-        Blockly.Blocks['ally_goal'] = {
+        Blockly.Blocks['old_ball_pos'] = {
             init: function () {
-                this.appendDummyInput().appendField("свои ворота");
+                this.appendDummyInput().appendField("старая позиция мяча");
                 this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#5b0669");
             }
         };
-        Blockly.Python.forBlock['ally_goal'] = function (block) {
+        Blockly.Python.forBlock['old_ball_pos'] = function (block) {
+            return [`field.ball_start_point`, Blockly.Python.ORDER_ATOMIC];
+        };
+        Blockly.Blocks['ball_moves'] = {
+            init: function () {
+                this.appendDummyInput().appendField("мяч двигается");
+                this.setInputsInline(true); this.setOutput(true, "Boolean"); this.setColour("#5b0669");
+            }
+        };
+        Blockly.Python.forBlock['ball_moves'] = function (block) {
+            return [`field.is_ball_moves()`, Blockly.Python.ORDER_ATOMIC];
+        };
+
+        Blockly.Blocks['ally_goal_center'] = {
+            init: function () {
+                this.appendDummyInput().appendField("центр своих ворот");
+                this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#5b0669");
+            }
+        };
+        Blockly.Python.forBlock['ally_goal_center'] = function (block) {
             return [`field.ally_goal.center`, Blockly.Python.ORDER_ATOMIC];
         };
 
-        Blockly.Blocks['defend_point'] = {
+        Blockly.Blocks['def_point_1'] = {
             init: function () {
-                this.appendDummyInput().appendField("точка для защиты");
+                this.appendDummyInput().appendField("точка линии защиты 1");
                 this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#5b0669");
             }
         };
-        Blockly.Python.forBlock['defend_point'] = function (block) {
-            return [`goalk_func.calc_gk_position(field,field.active_allies(False))[0]`, Blockly.Python.ORDER_ATOMIC];
+        Blockly.Python.forBlock['def_point_1'] = function (block) {
+            return [`aux.Point(0,-500)`, Blockly.Python.ORDER_ATOMIC];
         };
 
-        Blockly.Blocks['enemy_goal'] = {
+        Blockly.Blocks['def_point_2'] = {
             init: function () {
-                this.appendDummyInput().appendField("вражеские ворота");
+                this.appendDummyInput().appendField("точка линии защиты 2");
                 this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#5b0669");
             }
         };
-        Blockly.Python.forBlock['enemy_goal'] = function (block) {
+        Blockly.Python.forBlock['def_point_2'] = function (block) {
+            return [`aux.Point(300,-700)`, Blockly.Python.ORDER_ATOMIC];
+        };
+
+        Blockly.Blocks['atk_point_1'] = {
+            init: function () {
+                this.appendDummyInput().appendField("точка линии атаки 1");
+                this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#5b0669");
+            }
+        };
+        Blockly.Python.forBlock['def_point_1'] = function (block) {
+            return [`aux.Point(800, 500)`, Blockly.Python.ORDER_ATOMIC];
+        };
+        Blockly.Blocks['atk_point_2'] = {
+            init: function () {
+                this.appendDummyInput().appendField("точка линии атаки 2");
+                this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#5b0669");
+            }
+        };
+        Blockly.Python.forBlock['def_point_2'] = function (block) {
+            return [`aux.Point(300, 800)`, Blockly.Python.ORDER_ATOMIC];
+        };
+        Blockly.Blocks['ally_goal_up'] = {
+            init: function () {
+                this.appendDummyInput().appendField("верх своих ворот");
+                this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#5b0669");
+            }
+        };
+        Blockly.Python.forBlock['ally_goal_up'] = function (block) {
+            return [`field.ally_goal.up`, Blockly.Python.ORDER_ATOMIC];
+        };
+
+        Blockly.Blocks['ally_goal_down'] = {
+            init: function () {
+                this.appendDummyInput().appendField("низ своих ворот");
+                this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#5b0669");
+            }
+        };
+        Blockly.Python.forBlock['ally_goal_down'] = function (block) {
+            return [`field.ally_goal.down`, Blockly.Python.ORDER_ATOMIC];
+        };
+
+
+        Blockly.Blocks['enemy_goal_center'] = {
+            init: function () {
+                this.appendDummyInput().appendField("центр вражеских ворот");
+                this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#5b0669");
+            }
+        };
+        Blockly.Python.forBlock['enemy_goal_center'] = function (block) {
             return [`field.enemy_goal.center`, Blockly.Python.ORDER_ATOMIC];
         };
+
+        Blockly.Blocks['enemy_goal_up'] = {
+            init: function () {
+                this.appendDummyInput().appendField("верх вражеских ворот");
+                this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#5b0669");
+            }
+        };
+        Blockly.Python.forBlock['enemy_goal_up'] = function (block) {
+            return [`field.enemy_goal.up`, Blockly.Python.ORDER_ATOMIC];
+        };
+
+        Blockly.Blocks['enemy_goal_down'] = {
+            init: function () {
+                this.appendDummyInput().appendField("низ вражеских ворот");
+                this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#5b0669");
+            }
+        };
+        Blockly.Python.forBlock['enemy_goal_down'] = function (block) {
+            return [`field.enemy_goal.down`, Blockly.Python.ORDER_ATOMIC];
+        };
+
+
+
 
         Blockly.Blocks['create_point'] = {
             init: function () {
@@ -267,10 +362,55 @@
             return [`${a} ${op} ${b}`, Blockly.Python.ORDER_ATOMIC];
         };
 
+
+
+        Blockly.Blocks['line_intersect'] = {
+            init: function () {
+                this.appendDummyInput().appendField("Пересечение прямых");
+                this.appendValueInput("line11").setCheck("Point");
+                this.appendValueInput("line12").setCheck("Point");
+                this.appendValueInput("line21").setCheck("Point");
+                this.appendValueInput("line22").setCheck("Point");
+                this.appendDummyInput().appendField(new Blockly.FieldDropdown([["Отрезок", "S"], ["Линия", "L"], ["Луч", "R"]]), "OP1");
+                this.appendDummyInput().appendField(new Blockly.FieldDropdown([["Отрезок", "S"], ["Линия", "L"], ["Луч", "R"]]), "OP2");
+
+                this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#0d8d94");
+            }
+        };
+        Blockly.Python.forBlock['line_intersect'] = function (block) {
+            const line11 = Blockly.Python.valueToCode(block, 'line11', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
+            const line12 = Blockly.Python.valueToCode(block, 'line12', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
+            const line21 = Blockly.Python.valueToCode(block, 'line21', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
+            const line22 = Blockly.Python.valueToCode(block, 'line22', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
+
+            const op1 = block.getFieldValue('OP1').toLowerCase();
+            const op2 = block.getFieldValue('OP2').toLowerCase();
+
+            return [`aux.get_line_intersection(${line11},${line12},${line21},${line22},"${op1}${op1}")`, Blockly.Python.ORDER_ATOMIC];
+        };
+
+        Blockly.Blocks['closest_point_on_line'] = {
+            init: function () {
+                this.appendDummyInput().appendField("ближайшая точка на линии");
+                this.appendValueInput("line1").setCheck("Point");
+                this.appendValueInput("line2").setCheck("Point");
+                this.appendDummyInput().appendField(new Blockly.FieldDropdown([["Отрезок", "S"], ["Линия", "L"], ["Луч", "R"]]), "OP");
+
+                this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#0d8d94");
+            }
+        };
+        Blockly.Python.forBlock['closest_point_on_line'] = function (block) {
+            const line1 = Blockly.Python.valueToCode(block, 'line1', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
+            const line2 = Blockly.Python.valueToCode(block, 'line2', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
+
+            const op = block.getFieldValue('OP').toLowerCase();
+
+            return [`aux.closest_point_on_line(${line1},${line2},"${op1}")`, Blockly.Python.ORDER_ATOMIC];
+        };
         Blockly.Blocks['point_scale'] = {
             init: function () {
                 this.appendValueInput("P").setCheck("Point");
-                this.appendDummyInput().appendField("*");
+                this.appendDummyInput().appendField(new Blockly.FieldDropdown([["*", "MUL"], ["/", "DIV"]]), "OP");
                 this.appendValueInput("N").setCheck("Number");
                 this.setInputsInline(true); this.setOutput(true, "Point"); this.setColour("#0d8d94");
             }
@@ -278,7 +418,8 @@
         Blockly.Python.forBlock['point_scale'] = function (block) {
             const p = Blockly.Python.valueToCode(block, 'P', Blockly.Python.ORDER_ATOMIC) || 'Point(0,0)';
             const n = Blockly.Python.valueToCode(block, 'N', Blockly.Python.ORDER_ATOMIC) || '1';
-            return [`${p} * ${n}`, Blockly.Python.ORDER_ATOMIC];
+            const op = block.getFieldValue('OP') === 'MUL' ? '*' : '/';
+            return [`${p} ${op} ${n}`, Blockly.Python.ORDER_ATOMIC];
         };
 
         Blockly.Blocks['point_get'] = {
@@ -365,14 +506,15 @@
             }
         };
         Blockly.Python.forBlock['is_ball_in_zone'] = function (block) {
-            return [`aux.is_point_inside_poly(field.ball.get_pos(),field.ally_goal.big_hull)`, Blockly.Python.ORDER_ATOMIC];
+            return [`aux.is_point_inside_poly(field.ball.get_pos(),field.ally_goal_center.big_hull)`, Blockly.Python.ORDER_ATOMIC];
         };
+
         const pyHeader = "# mypy: ignore-errors\nfrom bridge import const\nfrom bridge.auxiliary import aux, fld, rbt\nfrom bridge.const import State as GameStates\nfrom bridge.router.base_actions import Action, Actions, KickActions\nfrom bridge.strategy import attack_roles, defense_roles, goalk_func, ref_states, tests, attacker_func\nfrom bridge.strategy.strategy import Strategy\n";
         //"def debug(self: Strategy, field: fld.Field, actions: list[Action]) -> None:\n"
         const pyEnder = "Strategy.debug = debug"
         async function update() {
             const code = pyHeader + Blockly.Python.workspaceToCode(workspace) + pyEnder;
-            document.getElementById('codeOutput').innerText = code;
+            // document.getElementById('codeOutput').innerText = code;
             if (fileHandle) {
                 try {
                     const writable = await fileHandle.createWritable();
